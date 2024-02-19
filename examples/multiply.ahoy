@@ -1,0 +1,7 @@
+# multiply.ahoy - Multiplies two single-digit numbers and prints the result
+
+PARLEY       # Read the first digit and convert
+PARLEY       # Read the second digit and convert
+CANNON       # Multiply the two numeric values on top of the stack
+HOIST        # Print the result as an integer
+KEELHAUL     # End program
