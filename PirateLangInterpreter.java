@@ -14,7 +14,7 @@ public class PirateLangInterpreter {
         this.instructions = new ArrayList<>();
         this.stack = new Stack<>();
         this.pc = 0;
-        loadInstructions(fileName);
+        loadInstructions("examples/" + fileName);
     }
 
     // Loads instructions from a given file into the instructions list
