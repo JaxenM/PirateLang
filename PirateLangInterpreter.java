@@ -2,22 +2,18 @@ import java.io.*;
 import java.util.*;
 
 public class PirateLangInterpreter {
-    // List to store instructions read from the file
+    // Use Deque to define the stack
     private List<String> instructions;
-    // Stack to perform operations on, following LIFO principle
-    private Stack<Integer> stack;
-    // Program counter to keep track of the current instruction
+    private Deque<Integer> stack;
     private int pc;
 
-    // Constructor that initializes the interpreter with instructions from a file
     public PirateLangInterpreter(String fileName) throws IOException {
         this.instructions = new ArrayList<>();
-        this.stack = new Stack<>();
+        this.stack = new ArrayDeque<>();
         this.pc = 0;
         loadInstructions("examples/" + fileName);
     }
 
-    // Loads instructions from a given file into the instructions list
     private void loadInstructions(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         String line;
@@ -27,15 +23,12 @@ public class PirateLangInterpreter {
         reader.close();
     }
 
-    // Executes a single instruction based on its type
     private void executeInstruction(String instruction, String[] parts) {
         switch (instruction) {
             case "ARR":
-                // Pushes a number onto the stack
                 stack.push(Integer.parseInt(parts[1]));
                 break;
             case "PLUNDER":
-                // Duplicates the top value of the stack
                 if (!stack.isEmpty()) {
                     stack.push(stack.peek());
                 } else {
@@ -43,13 +36,11 @@ public class PirateLangInterpreter {
                 }
                 break;
             case "MAROON":
-                // Removes the top value of the stack
                 if (!stack.isEmpty()) {
                     stack.pop();
                 }
                 break;
             case "PARLEY":
-                // Takes a digit as input and pushes it onto the stack
                 try {
                     System.out.println("Enter a digit:");
                     Scanner scanner = new Scanner(System.in);
@@ -60,7 +51,6 @@ public class PirateLangInterpreter {
                 }
                 break;
             case "HEAVEHO":
-                // Takes a line of input and pushes each character's ASCII value onto the stack
                 try {
                     System.out.println("Enter a line of characters:");
                     Scanner scanner = new Scanner(System.in);
@@ -73,25 +63,21 @@ public class PirateLangInterpreter {
                 }
                 break;
             case "GALLEON":
-                // Pops and prints characters from the stack until it is empty
                 while (!stack.isEmpty()) {
                     System.out.print((char) stack.pop().intValue());
                 }
                 break;
             case "HOIST":
-                // Pops the top value of the stack and prints it as an integer
                 if (!stack.isEmpty()) {
                     System.out.println(stack.pop());
                 }
                 break;
             case "JOLLYROGER":
-                // Pops the top value of the stack and prints it as a character
                 if (!stack.isEmpty()) {
                     System.out.print((char) stack.pop().intValue());
                 }
                 break;
             case "CANNON":
-                // Multiplies the two topmost values on the stack and pushes the result
                 if (stack.size() < 2) {
                     throw new IllegalStateException("Stack underflow during multiplication");
                 }
@@ -100,13 +86,46 @@ public class PirateLangInterpreter {
                 stack.push(a * b);
                 break;
             case "KEELHAUL":
-                // Terminates the program execution
                 pc = instructions.size();
+                break;
+            case "CHARGE":
+                try {
+                    System.out.println("Enter a character:");
+                    Scanner scanner = new Scanner(System.in);
+                    String inputCharacter = scanner.nextLine();
+                    if (inputCharacter.length() == 1) {
+                        stack.push((int) inputCharacter.charAt(0));
+                    } else if (inputCharacter.length() == 1) {
+                        System.err.println("Try again, please enter a character");
+                    } else {
+                        System.err.println("Try again, please only enter one character");
+                    }
+                } catch (Exception e) {
+                    System.err.println("An error occurred while reading input.");
+                }
+                break;
+            case "BROADSIDE":
+                if (stack.size() == 2) {
+                    int count = stack.pop();
+                    int charValue = stack.pop();
+                    char character = (char) charValue;
+                    for (int i = 0; i < count; i++) {
+                        System.out.print(character);
+                    }
+                } else {
+                    System.err.println("Error: Insufficient data on stack for KLED operation.");
+                }
+                break;
+            case "COMEABOUT":
+                Deque<Integer> tempStack = new ArrayDeque<>();
+                while (!stack.isEmpty()) {
+                    tempStack.push(stack.pop());
+                }
+                stack = tempStack;
                 break;
         }
     }
 
-    // Main loop that runs the program by executing instructions until the end is reached
     public void run() {
         while (pc < instructions.size()) {
             String instructionLine = instructions.get(pc).trim();
@@ -114,14 +133,12 @@ public class PirateLangInterpreter {
                 String[] parts = instructionLine.split("\\s+");
                 executeInstruction(parts[0], parts);
             }
-            pc++; // Increment the program counter
+            pc++;
         }
     }
 
-    // Used to test example files.
     public static void main(String[] args) {
-        // Example programs to be executed
-        String[] programs = {"helloWorld.ahoy", "multiply.ahoy", "reverseString.ahoy"};
+        String[] programs = { "helloWorld.ahoy", "multiply.ahoy", "reverseString.ahoy", "repeater.ahoy", "cat.ahoy" };
         for (String program : programs) {
             try {
                 System.out.println("=================================");
